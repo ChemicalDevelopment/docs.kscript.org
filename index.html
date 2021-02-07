@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width,initial-scale=1.0'>
+    <title>kscript manual v0.0.1</title>
+
+<!-- MathJax -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$']]
+        }
+    };
+    </script>
+    <script src='//polyfill.io/v3/polyfill.min.js?features=es6'></script>
+    <script id='MathJax-script' async src='//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'></script>
+
+<!-- highlight.js -->
+    <script src='//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.0/highlight.min.js'></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+<!-- doq specific assets -->
+    <link rel='stylesheet' href='doq.css'>
+    <script src='./doq.js'></script>
+    <script src='./hljs-ks.js'></script>
+
+</head>
+<body>
+<div id='sidenav' class='sidenav'><div>
+<ul><li><a href='#kscript_manual'>kscript manual</a><ul><li><a href='#Philosophy'>Philosophy</a><ul><li><a href='#Patterns'>Patterns</a><ul></ul></li><li><a href='#Magic_Attributes'>Magic Attributes</a><ul></ul></li></ul></li><li><a href='#Syntax'>Syntax</a><ul><li><a href='#EBNF-like'>EBNF-like</a><ul></ul></li><li><a href='#Integer_Literals'>Integer Literals</a><ul></ul></li><li><a href='#Float_Literals'>Float Literals</a><ul></ul></li><li><a href='#Complex_Literals'>Complex Literals</a><ul></ul></li><li><a href='#String_Literals'>String Literals</a><ul></ul></li></ul></li><li><a href='#Builtins'>Builtins</a><ul><li><a href='#Types'>Types</a><ul></ul></li><li><a href='#Functions'>Functions</a><ul></ul></li><li><a href='#Errors'>Errors</a><ul></ul></li></ul></li><li><a href='#Modules'>Modules</a><ul><li><a href='#util'>util: Utilities</a><ul></ul></li><li><a href='#os'>os: Operating System</a><ul></ul></li><li><a href='#time'>time: Time</a><ul></ul></li><li><a href='#m'>m: Math</a><ul></ul></li></ul></li></ul></li></ul><div class='sidenav-bottom'>
+2020 ChemicalDevelopment</div>
+</div></div>
+<div class='main'><div>
+<h0> </h0>
+<h1 id='kscript_manual'> kscript manual</h1>
+<ul><li><a href='#Philosophy'>Philosophy</a>: Design decisions, and high-level overview of how everything works<ul><li><a href='#Patterns'>Patterns</a>: Duck-typing concept<ul></ul></li><li><a href='#Magic_Attributes'>Magic Attributes</a>: Duck-typing concept<ul></ul></li></ul></li><li><a href='#Syntax'>Syntax</a>: Language specification and grammar rules<ul><li><a href='#EBNF-like'>EBNF-like</a>: Formal specification<ul></ul></li><li><a href='#Integer_Literals'>Integer Literals</a>: Whole number literal syntax<ul></ul></li><li><a href='#Float_Literals'>Float Literals</a>: Real number literal syntax<ul></ul></li><li><a href='#Complex_Literals'>Complex Literals</a>: Complex literal syntax<ul></ul></li><li><a href='#String_Literals'>String Literals</a>: String literal syntax<ul></ul></li></ul></li><li><a href='#Builtins'>Builtins</a>: Types, functions, and values available everywhere<ul><li><a href='#Types'>Types</a>: Builtin types<ul></ul></li><li><a href='#Functions'>Functions</a>: Builtin functions<ul></ul></li><li><a href='#Errors'>Errors</a>: Builtin error types<ul></ul></li></ul></li><li><a href='#Modules'>Modules</a>: Standard library of kscript<ul><li><a href='#util'>util: Utilities</a>: Utilities Module<ul></ul></li><li><a href='#os'>os: Operating System</a>: Operating System Module<ul></ul></li><li><a href='#time'>time: Time</a>: Time Module<ul></ul></li><li><a href='#m'>m: Math</a>: Math Module<ul></ul></li></ul></li></ul><p>Welcome to the kscript manual, available online at <a href='https://manual.kscript.org'>manual.kscript.org</a>. This document was compiled on 2021-02-06</p>
+<p>kscript is a dynamic programming language with expressive syntax, cross-platform support, and a rich standard library. kscript was designed to be a tool useful in many different circumstances – as a computer calculator, as a task-automation language, GUI development language, numerical programming, and more.</p>
+<dl><dt id='What_is_kscript'>What is kscript?</dt><dd><a href='https://kscript.org'><p>kscript</a> is a dynamic programming language with expressive syntax, cross platform support, and a rich standard library. Its primary aim is to allow developers to write platform agnostic programs that can run anywhere, and require little or no platform- or os- specific code.</p>
+<p>    You're currently reading the manual, which is a formal specification of the language, builtins, standard library, and semantics.</p>
+<p>    </dd><dt id='Why_is_kscript'>Why is kscript?</dt><dd>kscript was designed to be a tool useful in many different circumstances – as a computer calculator, as a task-automation language, GUI development language, numerical programming, and more. A few languages may come to mind – namely Python, tcl, and so forth.</p>
+<p>    I found that I had issues with some choices the Python team made. Syntactically, I dislike required/syntactically-significant whitespace, and dislike Python’s overuse of <code>:</code>. . I feel that many Python modules (for example, the operating system module) do not give the best interface to their functionality, and often require the programmer to use platform-specific code. I’d like to conclude this paragraph with a redeeming note – Python has been very successful and I largely do enjoy the language (even though I have my complaints), and even borrow the great ideas Python has had.</p>
+<p>    </dd><dt id='Who_is_kscript'>Who is kscript?</dt><dd>kscript is developed by free software enthusiasts, under the organization <a href='https://chemicaldevelopment.us'>ChemicalDevelopment</a>. Feel free to contact current authors with questions, comments, or concerns at any time:</p>
+<p>    <ul><li><a href='mailto:cade@kscript.org'>Cade Brown &lt;cade@kscript.org&gt;</a></li><li><a href='mailto:greg@kscript.org'>Gregory Croisdale &lt;greg@kscript.org&gt;</a></li></ul></p>
+<p>    </p>
+<p>    </dd></dl></p>
+<h2 id='Philosophy'>1. Philosophy</h2>
+<ul><li><a href='#Patterns'>Patterns</a>: Duck-typing concept</li><li><a href='#Magic_Attributes'>Magic Attributes</a>: Duck-typing concept</li></ul><p>This section contains the design philosophy of kscript</p>
+<h3 id='Patterns'>1.1. Patterns</h3>
+<ul></ul><p>Patterns in kscript refer to sets of <a href='#Magic_Attributes'>magic attributes</a> and/or methods that objects are expected to have in order to fulfill a certain purpose. Objects that have those attributes and/or methods are said to "fit" a given pattern, and can be used like other objects that fit that pattern -- this is the basis of all <a href='https://en.wikipedia.org/wiki/Duck_typing'>duck-typed</a> programming languages.</p>
+<p>Patterns are a similar concept to what are called interfaces or contracts in other language, but in practice are much more dynamic, as the developer doesn't need to specify the pattern that the object fits. You can think of interfaces/contracts as a more formal specification, whereas patterns are dynamic and only require that a given attribute/method is available when a function expects it to be. If the attribute/method is unavailable, the function processing it will likely throw an error explaining that it does not have the expected attribute and/or method.</p>
+<p>Although the type does not matter for a pattern (objects of any type may fit a pattern), many patterns will have an abstract base type which other types are subtypes of. This is primarily done to simplify code and reduce redundancy (i.e. if all subtypes re-implemented the pattern handling code, then there would be code bloat and duplication). However, this is not required and is only done to simplify the implementation in most cases (or, for some sense of type-hierarchy purity).</p>
+<p>Some examples of patterns in the standard library are:</p>
+<ul><li>Number pattern, documented by the abstract base type <a href='#number'>number</a></li><li>IO pattern, documented by the abstract base type <a href='#io.BaseIO'>io.BaseIO</a></li></ul><h3 id='Magic_Attributes'>1.2. Magic Attributes</h3>
+<ul></ul><p>Magic attributes are the name we use to describe how the standard library (or external packages) inspect objects to determine how to use them for a particular purpose. </p>
+<p>For example, when <code>int(x)</code> is called, and <code>x</code> is an unfamiliar type (for example, a custom type), how does kscript know how to convert it to an integer? Well, for converting to integers, there is a well established magic attribute called <a href='#__int'>__int</a>, which is searched for on <code>x</code> (for example, <code>x.__int()</code> is attempted). If that does not work, there is a secondary magic attributed called <a href='#__integral'>__integral</a>, which is then searched (<code>x.__integral()</code> is attempted). If both of those fail, then a <a href='#TypeError'>TypeError</a> is thrown with a message explaining that <code>x</code> could not be converted to an <a href='#int'>int</a>. However, if one of those did succeed, then its return value is expected to be an integer, and kscript can use it as the return value.</p>
+<p>The above was just an example, but it shows how specially named attributes allow for different libraries and programs to communicate and translate objects into known quantities for processing. This section contains examples and commonly used magic attributes that you can use in your own code to write easier-to-use libraries and programs.</p>
+<dl><dt id='__int'>__int()</dt><dd><p>Used for direct conversion to <a href='#int'>int</a>. Should return an <a href='#int'>int</a>. Also see <a href='#__integral'>__integral</a></dd><dt id='__integral'>__integral()</dt><dd>Used for integral value conversion. Sshould return an <a href='#int'>int</a>. Also see <a href='#__int'>__int</a></dd><dt id='__bool'>__bool()</dt><dd>Used for conversion to <a href='#bool'>bool</a>, Should return a <a href='#bool'>bool</a></dd><dt id='__bytes'>__bytes()</dt><dd>Used for direct conversion to <a href='#bytes'>bytes</a>. Should return a <a href='#bytes'>bytes</a></dd><dt id='__str'>__str()</dt><dd>Used for direct conversion to <a href='#str'>str</a>. Should return a <a href='#str'>str</a></dd><dt id='__repr'>__repr()</dt><dd>Used for string representation (for example, the <a href='#repr'>repr</a> function). Should return an <a href='#str'>str</a></dd><dt id='__hash'>__hash()</dt><dd>Used for computing a <a href='https://en.wikipedia.org/wiki/Hash_function'>hash</a> of an object. Should return an <a href='#int'>int</a></dd><dt id='__len'>__len()</dt><dd>Used for computing the length of a container, which is typically the number of elements. Should return an <a href='#int'>int</a></dd><dt></dt></dl><h2 id='Syntax'>2. Syntax</h2>
+<ul><li><a href='#EBNF-like'>EBNF-like</a>: Formal specification</li><li><a href='#Integer_Literals'>Integer Literals</a>: Whole number literal syntax</li><li><a href='#Float_Literals'>Float Literals</a>: Real number literal syntax</li><li><a href='#Complex_Literals'>Complex Literals</a>: Complex literal syntax</li><li><a href='#String_Literals'>String Literals</a>: String literal syntax</li></ul></p>
+<p>This section describes the syntax of the ksript language. It explains the actual formal specs of what is and what is not valid kscript code.</p>
+<h3 id='EBNF-like'>2.1. EBNF-like</h3>
+<ul></ul><a href='https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form'><p>EBNF</a> is a notation to formalize computer grammars. In this page, the grammar of the kscript language is described using an EBNF-like syntax.</p>
+<pre class='language-text'><code>(* Entire program/file *)
+PROG    : STMT*
+
+(* Newline/break rule *)
+N       : '\n'
+        | ';'
+
+(* Block (enclosed in '{}') *)
+B       : '{' STMT* '}'
+
+(* Block (B) or comma statement *)
+BORC    : B
+        | ',' STMT
+
+(* Block (B) or statement *)
+BORS    : B
+        | STMT
+
+(* Statement, which does not yield a value *)
+STMT    : 'import' NAME N
+        | 'ret' EXPR? N
+        | 'throw' EPXR? N
+        | 'break' N
+        | 'cont' N
+        | 'if' EXPR BORC ('elif' BORC)* ('else' EXPR BORS)?
+        | 'while' EXPR BORC ('else' EXPR BORS)?
+        | 'for' EXPR BORC
+        | 'try' BORS ('catch' EXPR (('as' | '-&gt;') EXPR)?)* ('finally' BORS)?
+        | EXPR N
+        | N
+
+(* Expression, which does yield a value *)
+EXPR        : E0
+
+(* Precedence rules *)
+E0      : E1 '=' E0
+        | E1 '&=' E0
+        | E1 '^=' E0
+        | E1 '|=' E0
+        | E1 '&lt;&lt;=' E0
+        | E1 '&gt;&gt;=' E0
+        | E1 '+=' E0
+        | E1 '-=' E0
+        | E1 '*=' E0
+        | E1 '@=' E0
+        | E1 '/=' E0
+        | E1 '//=' E0
+        | E1 '%=' E0
+        | E1 '**=' E0
+        | E1
+
+E1      : E2 'if' E2 ('else' E1)?
+        | E2
+
+E2      : E2 '??' E3
+        | E3
+
+E3      : E2 '||' E3
+        | E3
+
+E4      : E4 '&&' E5
+
+E5      : E5 '===' E6
+        | E5 '==' E6
+        | E5 '!=' E6
+        | E5 '&lt;' E6
+        | E5 '&lt;=' E6
+        | E5 '&gt;' E6
+        | E5 '&gt;=' E6
+        | E5 'in' E6
+        | E5 '!in' E6
+        | E6
+        | E7
+
+E6      : E6 '|' E7
+        | E7
+
+E7      : E7 '^' E8
+        | E8
+
+E8      : E8 '&' E9
+        | E9
+
+E9      : E9 '&lt;&lt;' E10
+        | E9 '&gt;&gt;' E10
+        | E10
+
+E10     : E10 '+' E11
+        | E10 '-' E11
+        | E11
+
+E11     : E11 '*' E12
+        | E11 '@' E12
+        | E11 '/' E12
+        | E11 '//' E12
+        | E11 '%' E12
+        | E12
+
+E12     : E13 '**' E12
+        | E13
+
+E13     : '++' E13
+        | '--' E13
+        | '+' E13
+        | '-' E13
+        | '~' E13
+        | '!' E13
+        | '?' E13
+        | E15
+
+E14     : E14 '.' NAME
+        | E14 '++'
+        | E14 '--'
+        | E14 '(' (ARG (',' ARG)*)? ','? ')'   (* Function call *)
+        | E14 '[' (ARG (',' ARG)*)? ','? ']'   (* Subscript call *)
+        | TUPLE
+        | LIST
+        | SET
+        | DICT
+        | ATOM
+        | FUNC
+        | TYPE
+        | ENUM
+
+(* Atomic element of grammar (expression which is single token) *)
+ATOM    : NAME
+        | STR
+        | REGEX
+        | INT
+        | FLOAT
+        | '...'
+
+(* Valid argument to function call *)
+ARG     : '*' EXPR
+        | EXPR
+
+(* Valid parameter to a function *)
+PAR     : '*' NAME
+        | NAME ('=' EXPR)?
+
+(* Valid argument to container constructor (expression, or expand expression) *)
+ELEM    : '*' EXPR
+        | EXPR
+
+(* Valid argument to key-val container constructor *)
+ELEMKV  : EXPR ':' EXPR
+
+
+(* Tuple literal *)
+TUPLE   : '(' ','? ')'
+        | '(' ELEM (',' ELEM)* ','? ')'
+
+(* List literal *)
+LIST    : '[' ','? ']'
+        | '[' ELEM (',' ELEM)* ','? ']'
+
+(* Set literal (no empty set, since that conflicts with dict) *)
+SET     : '{' ELEM (',' ELEM)* ','? '}'
+
+(* Dict literal *)
+DICT    : '{' ','? '}'
+        | '{' ELEMKV (',' ELEMKV)* ','? '}'
+
+(* Function constructor *)
+FUNC    : 'func' NAME? ('(' (PAR (',' PAR)*)? ','? ')')? B
+
+(* Type constructor *)
+TYPE    : 'type' NAME? ('extends' EXPR)? B
+
+(* Enum constructor *)
+ENUM    : 'enum' NAME? B
+
+
+(* Token kinds described as literals *)
+NAME    : ? unicode identifier ?
+STR     : ? string literal ?
+REGEX   : ? regex literal ?
+INT     : ? integer literal ?
+FLOAT   : ? floating point literal ?
+
+</code></pre><h3 id='Integer_Literals'>2.2. Integer Literals</h3>
+<ul></ul><p>This is the syntax for constructing literal integers (of type <a href='#int'>int</a>). You can specify the base-10 digits within a kscript program, and it will be interpreted as an integer. You can also use a prefix for other notations -- see the table below for a list of valid ones:</p>
+<dl><dt id='0b'>0b</dt><dd><a href='https://en.wikipedia.org/wiki/Binary_number'><p>Binary</a> notation involves the prefix <code>0b</code> or <code>0B</code> followed by a sequence of base-2 digits (called bits), which are either <code>0</code> or <code>1</code></dd><dt id='0o'>0o</dt><dd><a href='https://en.wikipedia.org/wiki/Octal'>Octal</a> notation involves the prefix <code>0o</code> or <code>0O</code> (that's "zero" "oh", as in the number and then letter) followed by a sequence of base-8 digits, which are one of: <code>0</code>, <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, <code>5</code>, <code>6</code>, <code>7</code>. A common use of this notation is file permission bits, see: <a href='#os.mkdir'>os.mkdir</a>, <a href='#os.stat'>os.stat</a></dd><dt id='0x'>0x</dt><dd><a href='https://en.wikipedia.org/wiki/Hexadecimal'>Hexadecimal</a> notation involves the prefix <code>0x</code> or <code>0X</code> followed by a sequence of base-16 digits, which are are one of: <code>0</code>, <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, <code>5</code>, <code>6</code>, <code>7</code>, <code>8</code>, <code>9</code>, <code>a</code>/<code>A</code>, <code>b</code>/<code>B</code>, <code>c</code>/<code>C</code>, <code>d</code>/<code>D</code>, <code>e</code>/<code>E</code>, <code>f</code>/<code>F</code></dd><dt></dt></dl></p>
+<p>Regardless of the notation, the result is an <a href='#int'>int</a> object with the specified value. Also, note that there are no "negative integer literals" -- only a positive one with a <code>-</code> operator, which causes negation. </p>
+<p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; 123       # Base-10
+123
+&gt;&gt;&gt; 255       # Base-10
+255
+
+&gt;&gt;&gt; 0x7B      # Base-16
+123
+&gt;&gt;&gt; 0xFF      # Base-16
+255
+
+&gt;&gt;&gt; 0o173     # Base-8
+123
+&gt;&gt;&gt; 0o377     # Base-8
+255
+
+&gt;&gt;&gt; 0b1111011 # Base-2
+123
+&gt;&gt;&gt; 0b11111111 # Base-2
+255
+</code></pre><h3 id='Float_Literals'>2.3. Float Literals</h3>
+<ul></ul><p>This is the syntax for constructing literal floating point numbers (of type <a href='#float'>float</a>). You can specify the base-10 digits within a kscript program, including a <code>.</code> for the whole number/fractional seperator (which differentiates <a href='#float'>float</a> literals from <a href='#Integer_Literals'>Integer Literals</a>), and it will be interpreted as a real number, represented as accurately as the machine precision can (see <a href='#float.EPS'>float.EPS</a>). Additionally, an exponent is allowed (see: <a href='https://en.wikipedia.org/wiki/Scientific_notation'>scientific notation</a>) with the <code>e</code> or <code>E</code> characters. You can also use a prefix for other notations -- see the table below for a list of valid ones:</p>
+<dl><dt id='0b'>0b</dt><dd><a href='https://en.wikipedia.org/wiki/Binary_number'><p>Binary</a> notation involves the prefix <code>0b</code> or <code>0B</code> followed by a sequence of base-2 digits (called bits), which are either <code>0</code> or <code>1</code>. Must include a <code>.</code> as a seperator</p>
+<p>    </p>
+<p>    Instead of using <code>e</code> or <code>E</code> for the base-10 power, you use <code>p</code> or <code>P</code> for a base-2 power.</p>
+<p>    </dd><dt id='0o'>0o</dt><dd><a href='https://en.wikipedia.org/wiki/Octal'>Octal</a> notation involves the prefix <code>0o</code> or <code>0O</code> (that's "zero" "oh", as in the number and then letter) followed by a sequence of base-8 digits, which are one of: <code>0</code>, <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, <code>5</code>, <code>6</code>, <code>7</code>. Must include a <code>.</code> as a seperator</p>
+<p>    Instead of using <code>e</code> or <code>E</code> for the base-10 power, you use <code>p</code> or <code>P</code> for a base-2 power.</p>
+<p>    </p>
+<p>    </dd><dt id='0x'>0x</dt><dd><a href='https://en.wikipedia.org/wiki/Hexadecimal'>Hexadecimal</a> notation involves the prefix <code>0x</code> or <code>0X</code> followed by a sequence of base-16 digits, which are are one of: <code>0</code>, <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, <code>5</code>, <code>6</code>, <code>7</code>, <code>8</code>, <code>9</code>, <code>a</code>/<code>A</code>, <code>b</code>/<code>B</code>, <code>c</code>/<code>C</code>, <code>d</code>/<code>D</code>, <code>e</code>/<code>E</code>, <code>f</code>/<code>F</code>. Must include a <code>.</code> as a seperator</p>
+<p>    </p>
+<p>    Instead of using <code>e</code> or <code>E</code> for the base-10 power, you use <code>p</code> or <code>P</code> for a base-2 power.</p>
+<p>    </dd><dt></dt></dl></p>
+<p>In addition to the digits, there are also two builtin names <code>inf</code> and <code>nan</code>, which represent positive infinity and not-a-number respectively.</p>
+<p>Also, note that there are no "negative float literals" -- only a positive one with a <code>-</code> operator, which causes negation. </p>
+<p>Regardless of the notation, the result is a <a href='#float'>float</a> object with the specified value.</p>
+<p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; 123.0     # Base-10
+123.0
+&gt;&gt;&gt; 255.0     # Base-10
+255.0
+&gt;&gt;&gt; 100.75    # Base-10
+100.75
+
+&gt;&gt;&gt; 0x7B.0    # Base-16
+123.0
+&gt;&gt;&gt; 0xFF.0    # Base-16
+255.0
+&gt;&gt;&gt; 0x64.C    # Base-16
+100.75
+
+&gt;&gt;&gt; 0o173.0   # Base-8
+123.0
+&gt;&gt;&gt; 0o377.0   # Base-8
+255.0
+&gt;&gt;&gt; 0o144.6   # Base-8
+100.75
+
+&gt;&gt;&gt; 0b1111011.0 # Base-2
+123.0
+&gt;&gt;&gt; 0b11111111.0 # Base-2
+255.0
+&gt;&gt;&gt; 0b1100100.11 # Base-2
+100.75
+</code></pre><p>Here are some examples with scientific notation:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; 1.234e3
+1234
+&gt;&gt;&gt; 1234e-3
+1.234
+&gt;&gt;&gt; 1e9
+1000000000.0
+</code></pre><h3 id='Complex_Literals'>2.4. Complex Literals</h3>
+<ul></ul><p>This is the syntax for constructing literal <a href='#complex'>complex</a> values. Specifically, you can only construct imaginary literals -- you need to use the <code>+</code> operator to create a complex number with real and imaginary components.</p>
+<p>Complex literals are created by placing an <code>i</code> or <code>I</code> directly after an <a href='#Integer_Literal'>Integer Literal</a> or <a href='#Float_Literal'>Float Literal</a>, which results in a complex number with <code>0.0</code> as the real component, and the integer or floating point value as the imaginary component. Note that <a href='#complex'>complex</a> objects have both components as <a href='#float'>float</a> values, so even though an integer imaginary component may be given (for example, <code>123i</code>), the resulting complex value will have floating point components.</p>
+<p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; 1i          # Base-10
+1.0i
+&gt;&gt;&gt; 123i        # Base-10
+123.0i
+&gt;&gt;&gt; 12+34i      # Base-10
+(12.0+34.0i)
+
+&gt;&gt;&gt; 0x1i        # Base-16
+1.0i
+&gt;&gt;&gt; 0x7Bi       # Base-16
+123.0i
+&gt;&gt;&gt; 0xC+0x22i   # Base-16
+(12.0+34.0i)
+</code></pre><h3 id='String_Literals'>2.5. String Literals</h3>
+<ul></ul><p>This is the syntax for constructing literal <a href='#str'>str</a> values. The basic syntax is a beginning quote character (one of <code>'</code>, <code>"</code>, <code>'''</code>, <code>"""</code>), followed by the contents of the string, and then an ending quote character that matched the one the string started with. The contents of the string can be either character literals, or escape codes (see below for a list of escape sequences). The result will always be a <a href='#str'>str</a> object, which is immutable.</p>
+<p>Here's a list of escape sequences:</p>
+<dl><dt id='\\\\_'>\\\\ </dt><dd><p>A literal <code>\</code></dd><dt id='\''>\'</dt><dd>A literal <code>'</code></dd><dt id='\"'>\"</dt><dd>A literal <code>"</code></dd><dt id='\a'>\a</dt><dd>An ASCII <code>BEL</code> character (bell/alarm)</dd><dt id='\b'>\b</dt><dd>An ASCII <code>BS</code> character (backspace)</dd><dt id='\f'>\f</dt><dd>An ASCII <code>FF</code> character (formfeed)</dd><dt id='\n'>\n</dt><dd>An ASCII <code>LF</code> character (newline/linefeed)</dd><dt id='\r'>\r</dt><dd>An ASCII <code>CR</code> character (carriage return)</dd><dt id='\t'>\t</dt><dd>An ASCII <code>HT</code> character (horizontal tab)</dd><dt id='\v'>\v</dt><dd>An ASCII <code>VT</code> character (bertical tab)</dd><dt id='\xXX'>\xXX</dt><dd>Single byte, where <code>XX</code> are the 2 hexadecimal digits of the codepoint (padded with leading zeros)</p>
+<p>Examples:</p>
+<pre class='language-text'><code>&gt;&gt;&gt; '\x61'
+'a'
+</code></pre><p>    </dd><dt id='\uXXXX'>\uXXXX</dt><dd>Unicode character, where <code>XXXX</code> are the 4 hexadecimal digits of the codepoint (padded with leading zeros)</p>
+<p>Examples:</p>
+<pre class='language-text'><code>&gt;&gt;&gt; '\u0061'
+'a'
+</code></pre><p>    </dd><dt id='\UXXXXXXXX'>\UXXXXXXXX</dt><dd>Unicode character, where <code>XXXXXXXX</code> are the 8 hexadecimal digits of the codepoint (padded with leading zeros)</p>
+<p>Examples:</p>
+<pre class='language-text'><code>&gt;&gt;&gt; '\U00000061'
+'a'
+</code></pre><p>    </dd><dt id='\N[XX...X]'>\N[XX...X]</dt><dd>Unicode character, where <code>XX...X</code> is the <a href='https://en.wikipedia.org/wiki/List_of_Unicode_characters'>name</a> of the Unicode character</p>
+<p>Examples:</p>
+<pre class='language-text'><code>&gt;&gt;&gt; '\N[LATIN SMALL LETTER A]'
+'a'
+</code></pre><p>    </dd></dl></p>
+<h2 id='Builtins'>3. Builtins</h2>
+<ul><li><a href='#Types'>Types</a>: Builtin types</li><li><a href='#Functions'>Functions</a>: Builtin functions</li><li><a href='#Errors'>Errors</a>: Builtin error types</li></ul><p>Builtins in kscript are the types, functions, and values that are available in the global namespace and thus available everywhere without the use of <code>import</code> statements. They are the most fundamental objects in kscript and are used most frequently, and so they are also made easiest to remember and type. Although kscript is duck-typed, using the builtin types is often recommended, as they have good performance and easy-to-use APIs.</p>
+<p>Since kscript is a <a href='https://en.wikipedia.org/wiki/Object-oriented_programming'>purely object-oriented language</a>, everything in kscript is an instance of the <a href='#object'>object</a> type, either directly or indirectly. This means that even types are objects, and can be treated generically as such. So can functions. This is in steep contrast to more static programming languages like C, C++, Rust, and so forth, which allow some limited compile time reflection, but little to no runtime inspection of types. kscript, however, is completely dynamic and allows things that other programming languages just can't offer. Here are a few examples:</p>
+<ul><li>Container types (<a href='#list'>list</a>, <a href='#tuple'>tuple</a>, <a href='#dict'>dict</a>, ...) can store objects of any types, and multiple objects of different types</li><li>Iterable types may yield objects of any types, and multiple objects of different types</li><li>Objects which are not <a href='#func'>func</a> instances may also be callable, if they implement the <a href='#__call'>__call</a> attribute</li></ul><h3 id='Types'>3.1. Types</h3>
+<ul></ul><dl><dt id='object'>object()</dt><dd><p>The most generic type, which is the common type that all other types are derived from. The code <code>isinst(x, object)</code> always returns true, no matter what object <code>x</code> refers to.</p>
+<p>    </p>
+<p>    Objects can be created via the constructor, <code>object()</code>, which returns a blank objects that has writeable and readable attributes</dd><dt id='type'>type(obj)</dt><dd>This type is what other types are an instance of. <code>type</code> is also an instance of <code>type</code>.</p>
+<p>    </p>
+<p>    Unlike most other types, the code <code>type(x)</code> does not created a new type; rather, it returns the type of <code>x</code></dd><dt id='number'>number(obj=0)</dt><dd>This type is the abstract base type of all other builtin numeric types (<a href='#int'>int</a>, <a href='#bool'>bool</a>, <a href='#float'>float</a>, <a href='#complex'>complex</a>). </p>
+<p>    </p>
+<p>    By default, <code>number()</code> will return the integer <code>0</code>. You can pass it any numeric type and it will return one of the builtin numeric types (or throw an error if there was a problem). You can also call it with a string, and it will parse the string and return a builtin numeric type.</p>
+<p>    </p>
+<p>    This type also defines and implements stubs for the "number <a href='#Patterns'>pattern</a>", which dictates how numeric types should behave. Specifically, an object <code>obj</code> is said to follow the number pattern if at least one of the following <a href='#Magic_Attributes'>magic attributes</a> holds:</p>
+<p>    <ul><li>If <code>obj.__integral()</code> exists, <code>obj</code> is assumed to be an integer, and this method should return an <a href='#int'>int</a> with an equivalent numerical value</li><li>If <code>obj.__float()</code> exists, <code>obj</code> is assumed to be a real floating point number, and this method should return a <a href='#float'>float</a> with an equivalent numerical value</li><li>If <code>obj.__complex()</code> exists, <code>obj</code> is assumed to be a complex floating point number, and this method should return a <a href='#complex'>complex</a> with an equivalent numerical value</li></ul></p>
+<p>    Operations between numbers use type coercion, with the following rules (unless otherwise stated):</p>
+<p>    <ul><li>
+        If all operands are integers, then an integer result is returned,
+        If all operands are either integers or real floating point numbers, then a real floating point result is returned,
+        If none of the above are applicable, then at least one operand must be a complex floating point number, and a complex floating point result is returned
+    </li></ul></p>
+<p>    </dd><dt id='int'>int(obj=0, base=none)</dt><dd>This type describes <a href='https://en.wikipedia.org/wiki/Integer'>integers</a> (i.e. whole numbers). This type is a subtype of <a href='#number'>number</a>, and subscribes to the <a href='#number'>number</a> <a href='#Patterns'>pattern</a>. You can create integers with <a href='#Integer_Literals'>integer literals</a>, or through using this type as a constructor. If <code>obj</code> is a string, then <code>base</code> can also be given, which is an integer describing the base format that the string is in.</p>
+<p>    </p>
+<p>    See: <a href='#Integer_Literals'>Integer Literals</a> for creating literals</p>
+<p>    Some languages (C, C++, Java, and so forth) have sized integer types which are limited to machine precisions (see: <a href='#https'>here</a>). For example, a 32 bit unsigned integer may only represent the values from $0$ to $2^{32}-1$. However, in kscript, all integers are of arbitrary precision – which means they may store whatever values can fit in the main memory of your computer (which is an extremely large limit on modern computers, and you are unlikely to hit that limit in any practical application).</p>
+<p>    </p>
+<p>    </dd><dt id='bool'>bool(obj=false)</dt><dd>This type describes <a href='https://en.wikipedia.org/wiki/Boolean_data_type'>booleans</a>. There are two boolean values, <code>true</code> and <code>false</code>. Sometimes, these are referred to as <code>0</code>/<code>1</code>, <code>on</code>/<code>off</code>, or even <code>yes</code>/<code>no</code>. <code>true</code> and <code>false</code> are keywords which result in these values.</p>
+<p>    </p>
+<p>    You can convert an object to a boolean (its "truthiness", or "truth" value) via this type as a function. For example, <code>bool(x)</code> turns <code>x</code> into its truthiness value, or, equivalently, <code>x as bool</code>. Typically, types that have custom truthiness logic work as expected -- numbers convert to <code>true</code> if they are non-zero, containers convert to <code>true</code> if they are non-empty, and so on. In general, if <code>bool(x) == true</code>, then <code>x</code> is non-empty, non-zero, and/or valid. Otherwise, it is empty, zero, or perhaps invalid. Specific types may overload it in a way that makes sense for them, so always beware of types that override this functionality.</p>
+<p>    This conversion to bool is dictated by the <a href='#__bool'>__bool</a> <a href='#Magic_Attributes'>magic attribute</a>.</p>
+<p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; bool()
+false
+&gt;&gt;&gt; bool(false)
+false
+&gt;&gt;&gt; bool(true)
+true
+&gt;&gt;&gt; bool(0)
+false
+&gt;&gt;&gt; bool(1)
+true
+&gt;&gt;&gt; bool(255)
+true
+&gt;&gt;&gt; bool('')
+false
+&gt;&gt;&gt; bool('AnyText')
+true
+</code></pre><p>    </dd><dt id='float'>float(obj=0.0, base=none)</dt><dd>This type describes <a href='https://en.wikipedia.org/wiki/Floating-point_arithmetic'>floating point</a> numbers. This type is a subtype of <a href='#number'>number</a>, and subscribes to the <a href='#number'>number</a> <a href='#Patterns'>pattern</a>. You can create floats with <a href='#Float_Literals'>float literals</a>, or through using this type as a constructor. If <code>obj</code> is a string, then <code>base</code> can also be given, which is an integer describing the base format that the string is in.</p>
+<p>    See: <a href='#Float_Literals'>Float Literals</a> for creating literals</p>
+<p>    </p>
+<p>    In addition to real numbers, this type can also represent infinity (positive and negative) (via <code>inf</code> and <code>-inf</code>), as well as not-a-number (via <code>nan</code>) values.</p>
+<p>    <dl><dt id='float.EPS'>float.EPS</dt><dd>The difference between 1.0 and the next largest number</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; float.EPS
+2.22044604925031e-16
+</code></pre><p>        </dd><dt id='float.MIN'>float.MIN</dt><dd>The minimum positive value representable as a <a href='#float'>float</a></p>
+<pre class='language-ks'><code>&gt;&gt;&gt; float.MIN
+2.2250738585072e-308
+</code></pre><p>        </dd><dt id='float.MAX'>float.MAX</dt><dd>The maximum positive (finite) value representable as a <a href='#float'>float</a></p>
+<pre class='language-ks'><code>&gt;&gt;&gt; float.MAX
+1.79769313486232e+308
+</code></pre><p>        </dd><dt id='float.DIG'>float.DIG</dt><dd>The number of significant digits that can be stored in a <a href='#float'>float</a></p>
+<pre class='language-ks'><code>&gt;&gt;&gt; float.DIG
+15
+</code></pre><p>        </dd><dt></dt></dl></p>
+<p>    </p>
+<p>    </dd><dt id='complex'>complex(obj=0.0+0.0i)</dt><dd>This type describes a <a href='https://en.wikipedia.org/wiki/Complex_number'>complex number</a> with a real and imaginary components (which can take on any <a href='#float'>float</a> values). You can access those elements via the <code>.re</code> and <code>.im</code> attributes, which will result in <a href='#float'>float</a> objects.</p>
+<p>    </p>
+<p>    See: <a href='#Complex_Literals'>Complex Literals</a> for creating literals</p>
+<p>    <dl><dt id='.re'>.re</dt><dd>Real component of a complex number, as a <a href='#float'>float</a></p>
+<p>        </p>
+<pre class='language-ks'><code>&gt;&gt;&gt; (2 + 3i).re
+2.0
+&gt;&gt;&gt; (3i).re
+0.0
+&gt;&gt;&gt; (2 + 0i).re
+2.0
+</code></pre><p>        </dd><dt id='.im'>.im</dt><dd>Imaginary component of a complex number, as a <a href='#float'>float</a></p>
+<p>        </p>
+<pre class='language-ks'><code>&gt;&gt;&gt; (2 + 3i).im
+3.0
+&gt;&gt;&gt; (3i).im
+3.0
+&gt;&gt;&gt; (2 + 0i).im
+0.0
+</code></pre></dd><dt></dt></dl><p>    </dd><dt id='str'>str(obj='')</dt><dd>This type describes a <a href='https://en.wikipedia.org/wiki/String_(computer_science)'>string</a>, which is a sequence of 0-or-more <a href='https://en.wikipedia.org/wiki/Unicode'>Unicode</a> characters. It is the basic unit of textual information in kscript, and can store any Unicode sequence. All operations are in terms of characters (also called codepoints), and not neccessarily bytes.</p>
+<p>    Some languages have a different type for a single character and a string. However, in kscript, a character is simply a string of length 1. And, the empty string is the string of length 0. Additionally, strings are immutable (which means they cannot be changed). For example, <code>x[0] = 'c'</code> will throw an error in kscript. Instead, you should use slicing and re-assign to the same name: <code>x = 'c' + x[1:]</code>.</p>
+<p>    You can create a string via calling this type as a function with an argument (default: empty string). For non-<a href='#str'>str</a> objects, conversion depends on the <a href='#__str'>__str</a> <a href='#Magic_Attributes'>magic attribute</a>, which is expected to return a <a href='#str'>str</a>.</p>
+<p>    </p>
+<p>    See <a href='#String_Literals'>String Literals</a> for creating literals.</p>
+<p>    Internally, kscript uses <a href='https://en.wikipedia.org/wiki/UTF-8'>UTF-8</a> to store the textual information.</p>
+<p>    Strings can be added together with the <code>+</code> operator, which concatenates their contents. For example, <code>'abc' + 'def' == 'abcdef'</code></p>
+<p>    </dd><dt id='bytes'>bytes(obj='')</dt><dd>This type represents a bytestring, which is similar to <a href='#str'>str</a>. The main difference being that <a href='#str'>str</a> is a sequence of Unicode characters, whereas <a href='#bytes'>bytes</a> is a sequence of bytes -- which may or may not be textual data.</p>
+<p>    You can create a bytestring by calling this type as a function with an argument (default: empty bytestring). For non-<a href='#bytes'>bytes</a> objects, conversion depends on the <a href='#__bytes'>__bytes</a> <a href='#Magic_Attributes'>magic attribute</a>. Commonly, calling <code>bytes(x)</code> where <code>x</code> is a <a href='#str'>str</a> will result in the <a href='https://en.wikipedia.org/wiki/UTF-8'>UTF-8</a> bytes of that string.</p>
+<p>    </dd><dt></dt></dl><h3 id='Functions'>3.2. Functions</h3>
+<ul></ul></p>
+<dl><dt id='print'>print(*args)</dt><dd><p>Prints all of <code>args</code> to the standard output (<a href='#os.stdout'>os.stdout</a>), by converting each one to a string, and adding a space between each argument. After all elements are printed, a newline is also printed.</p>
+<p>    </p>
+<p>    For finer grained control of output format see the <a href='#printf'>printf</a> function</dd><dt id='printf'>printf(fmt, *args)</dt><dd>Prints all of <code>args</code>, formatted with <code>fmt</code>. No newline or spaces are added between arguments or after all of them.</p>
+<p>    </p>
+<p>    The format string, <code>fmt</code>, is expected to be made up of format specifiers and normal printable text. A format specifier is started with the character <code>%</code> (percent sign), and followed by fields, which control how the object is converted. Finally, each format specifier ends with a single character denoting the type. Text in between format specifiers is output verbatim without modification</p>
+<p>    </p>
+<p>    Flags are optional characters that change the formatting for a specifier. All flags for a format specifier should be placed immediately after the %. Although different types may treat flags differently, generally their behavior is: <ul><li><code>+</code> causes the sign of numeric outputs to always be included (so, even positive numbers will have their sign before the digits)</li><li><code>-</code> causes the output to be left-aligned instead of right-aligned</li><li><code>0</code> causes the output of right-aligned numbers to contain leading 0s instead of spaces</li></ul></p>
+<p>    </p>
+<p>    After flags, there is an optional width field which can be an integer (for example, <code>%10s</code> has a width of <code>10</code>), or a <code>*</code>, which takes the next object from args, treats it like an integer, and treats that as the width (dynamic width).</p>
+<p>    After width, there is an optional precision field which can be a <code>.</code> followed by an integer (for example <code>%.10s</code> has a precision of <code>10</code>), or <code>.*</code>, which takes the next object from args, treats it like an integer, and treats that as the precision (dynamic precision).</p>
+<p>    Finally, there is the single-character format specifier which tells the type of output. Below are a table of specifiers:</p>
+<p>    </p>
+<p>    <dl><dt id='%%'>%%</dt><dd>A literal <code>%</code> is added, and no more objects from the arguments are consumed</dd><dt id='%i,_%d'>%i, %d</dt><dd>The next object from <code>args</code> is consumed, interpreted as an integer, and the base-10 digits are added</dd><dt id='%b'>%b</dt><dd>The next object from <code>args</code> is consumed, interpreted as an integer, and the base-2 digits are added</dd><dt id='%o'>%o</dt><dd>The next object from <code>args</code> is consumed, interpreted as an integer, and the base-8 digits are added</dd><dt id='%x'>%x</dt><dd>The next object from <code>args</code> is consumed, interpreted as an integer, and the base-16 digits are added</dd><dt id='%f'>%f</dt><dd>The next object from <code>args</code> is consumed, interpreted as a floating point number, and the base-10 digits are added</dd><dt></dt></dl></p>
+<p>    Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; printf('|%i|', 123)      # Direct translation
+|123|
+&gt;&gt;&gt; printf('|%5i|', 123)     # Pads to size 5
+|123  |
+&gt;&gt;&gt; printf('|%+5i|', 123)    # Pads to size 5, and always includes sign
+|+123 |
+&gt;&gt;&gt; printf('|%-5i|', 123)    # Pads to size 5, and is left-aligned
+|  123|
+&gt;&gt;&gt; printf('|%-+5i|', 123)   # Pads to size 5, and always includes sign, and is left-aligned
+| +123|
+&gt;&gt;&gt; printf('|%05i|', 123)    # Pads to size 5, and includes leading zeros
+|00123|
+&gt;&gt;&gt; printf('|%0*i|', 5, 123) # Equivalent, but takes the width argument before the value it prints
+|00123|
+</code></pre><p>    For formatted output on arbitrary IO objects, see the <a href='#io.BaseIO.printf'>io.BaseIO.printf</a> function.</p>
+<p>    </dd><dt></dt></dl><h3 id='Errors'>3.3. Errors</h3>
+<ul></ul></p>
+<p>Exception/Errors can be thrown via the <code>throw</code> statement and caught via the <code>try/catch</code> construct. Anything thrown must be an instance (either directly or indirectly) of the <a href='#Exception'>Exception</a> type.</p>
+<p>Exceptions are more general than errors; Errors indicate that something has gone wrong, whereas <a href='#Exception'>Exception</a> s can be used to disrupt control flow (see <a href='#OutOfIterException'>OutOfIterException</a>). Therefore, in <code>try/catch</code> sometimes it is recommended to only catch <code>Error</code> objects, and allow exceptions to pass upwards.</p>
+<dl><dt id='Exception'>Exception(what='')</dt><dd><p>This is the base type of all other exceptions. Only objects which are a subtype of <a href='#Exception'>Exception</a> may be thrown via the <code>throw</code> statement (and thus caught via the <code>try/catch</code> construct). Unlike most patterns in kscript (see <a href='#Patterns'>Patterns</a>), exception throwing requires the type of the object being thrown to be a derived type of this, instead of simply having magic attributes.</p>
+<p>    </p>
+<p>    <dl><dt id='.what'>.what</dt><dd>A string object that contains an explanation of the exception</dd></dl></p>
+<p>    </dd><dt id='OutOfIterException'>OutOfIterException()</dt><dd>This error is thrown whenever an iterable runs out of elements. For example, when <a href='#next'>next</a> is called but no more elements are left</p>
+<p>    </p>
+<p>    Exceptions of this type are automatically caught by <code>for</code> loops, which tell the loop to stop running</p>
+<p>    </p>
+<p>    This is a subtype of <a href='#Exception'>Exception</a></dd><dt id='Error'>Error(what='')</dt><dd>Generic error which means something bad happened and the operation could not be completed. Generally, <a href='#Exception'>Exception</a> types can be used to alter control flow and not neccessarily signal an error (for example, <a href='#OutOfIterException'>OutOfIterException</a> being used by <code>for</code> loops). However, this type and its subtypes are used to indicate such an error that should cause a program to halt (unless caught)</p>
+<p>    </p>
+<p>    This is a subtype of <a href='#Exception'>Exception</a></dd><dt id='InternalError'>InternalError(what='')</dt><dd>Errors of this type are thrown when something internally isn't working. Sometimes, it may signal a bug in kscript (such as an unexpected status, unexpected configuration, etc), or it may signal a C library returned something it promised not to.</p>
+<p>    In any case, these errors are hard to correct for, and when one is thrown, the status of the interpreter itself and objects that were mutated cannot be guaranteed to be predictable</dd><dt id='SyntaxError'>SyntaxError(what='')</dt><dd>Errors of this type are generally thrown at parsing time when a program is invalid, which could mean a number of things (unexpected tokens, invalid constructs, invalid characters, and so forth). Generally they have a descriptive message and highlight the offending part of the code, for easy debugging.</p>
+<p>    </p>
+<p>    Examples:</p>
+<pre class='language-ks'><code># Some of this code is invalid...
+&gt;&gt;&gt; for }
+SyntaxError: Unexpected token
+for }
+    ^
+@ Line 1, Col 5 in '&lt;expr&gt;'
+Call Stack:
+In &lt;thread 'main'&gt;
+&gt;&gt;&gt; 2def
+SyntaxError: Unexpected token, expected ';', newline, or EOF after
+2def
+ ^~~
+@ Line 1, Col 2 in '&lt;expr&gt;'
+Call Stack:
+In &lt;thread 'main'&gt;
+</code></pre><p>    </dd><dt id='ImportError'>ImportError(what='')</dt><dd>Errors of this type are generally thrown when importing a module fails, for whatever reason, including: missing dependencies, no such module, and error during initialization.</p>
+<p>    Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; import asdf
+ImportError: Failed to import 'asdf'
+&gt;&gt;&gt; import crazy_name_that_doesnt_exist
+ImportError: Failed to import 'crazy_name_that_doesnt_exist'
+</code></pre><p>    </dd><dt id='TypeError'>TypeError(what='')</dt><dd>Errors of this type are thrown when the <a href='#type'>type</a> of an object doesn't match what is expected, or the type lacks an expected attribute (i.e. does not follow a <a href='#Patterns'>pattern</a>).</p>
+<p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; int([])
+TypeError: Could not convert 'list' object to 'int'
+</code></pre><p>    </dd><dt id='TemplateError'>TemplateError(what='')</dt><dd>Errors of this type are thrown when a type is <a href='#Templates'>templated</a> incorrectly, or an operation is forbidden by a template.</p>
+<p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; object[]
+TemplateError: 'object' cannot be templated
+</code></pre><p>This type is a subtype of <a href='#TypeError'>TypeError</a></p>
+</dd><dt id='NameError'>NameError(what='')</dt><dd><p>Errors of this type are thrown when a variable/function/module name is used but has not been defined</p>
+<p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; asdf
+NameError: Unknown name: 'asdf'
+Call Stack:
+  #0: In '&lt;expr&gt;' (line 1, col 1):
+asdf
+^~~~
+In &lt;thread 'main'&gt;
+</code></pre></dd><dt id='AttrError'>AttrError(what='')</dt><dd><p>Errors of this type are thrown when any of the following things occur:</p>
+<ul><li>An attribute is requested on an object that doesn't have any such attribute</li><li>An attribute is read-only, but some code attempts to change it</li></ul><p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; object().a
+AttrError: 'object' object had no attribute 'asdf'
+Call Stack:
+  #0: In '&lt;expr&gt;' (line 1, col 1):
+object().asdf
+^~~~~~~~~~~~~
+In &lt;thread 'main'&gt;
+</code></pre></dd><dt id='KeyError'>KeyError(what='')</dt><dd><p>Errors of this type are thrown when any of the following things occur:</p>
+<ul><li>A key to a container (for example, a <a href='#dict'>dict</a>) is not found when searched</li><li>A key to a container is invalid (for example, <a href='#dict'>dict</a> keys must be <a href='#hash'>hash</a> -able)</li></ul><p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; x = { 'a': 1, 'b': 3 }
+{ 'a': 1, 'b': 3 }
+&gt;&gt;&gt; x['c']
+KeyError: 'c'
+Call Stack:
+  #0: In '&lt;inter-2&gt;' (line 1, col 1):
+x['c']
+^~~~~~
+In &lt;thread 'main'&gt;
+</code></pre></dd><dt id='IndexError'>IndexError(what='')</dt><dd><p>Errors of this type are thrown when any of the following things occur:</p>
+<ul><li>A index to a sequence (for example, a <a href='#list'>list</a>) is out of range</li></ul><p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; x = ['a', 'b']
+['a', 'b']
+&gt;&gt;&gt; x[3]
+KeyError: Index out of range
+Call Stack:
+  #0: In '&lt;inter-5&gt;' (line 1, col 1):
+x[2]
+^~~~
+In &lt;thread 'main'&gt;
+</code></pre><p>This type is a subtype of the <a href='#KeyError'>KeyError</a> type</p>
+</dd><dt id='ValError'>ValError(what='')</dt><dd><p>Errors of this type are thrown when a value provided does not match what is expected</p>
+<p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; nan as int
+ValError: Cannot convert 'nan' to int
+Call Stack:
+  #0: In '&lt;expr&gt;' (line 1, col 1):
+nan as int
+^~~~~~~~~~
+  #1: In int.__new(self, obj=none, base=10) [cfunc]
+In &lt;thread 'main'&gt;
+</code></pre><p>    </dd><dt id='MathError'>MathError(what='')</dt><dd>Errors of this type are thrown when a mathematical operation is given invalid or out of range operands</p>
+<p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; 1 / 0
+MathError: Division by 0
+Call Stack:
+  #0: In '&lt;expr&gt;' (line 1, col 1):
+1 / 0
+^~~~~
+  #1: In number.__div(L, R) [cfunc]
+In &lt;thread 'main'&gt;
+&gt;&gt;&gt; import m
+&gt;&gt;&gt; m.sqrt(-1)
+MathError: Invalid argument 'x', requirement 'x &gt;= 0' failed
+Call Stack:
+  #0: In '&lt;expr&gt;' (line 1, col 1):
+m.sqrt(-1)
+^~~~~~~~~~
+  #1: In m.sqrt(x) [cfunc]
+In &lt;thread 'main'&gt;
+&gt;&gt;&gt; m.sqrt(-1 + 0i)  # Make sure to pass a 'complex' in if you want complex output
+1.0i
+</code></pre><p>    </dd><dt id='ArgError'>ArgError(what='')</dt><dd></p>
+<p>Errors of this type are thrown when arguments to a function do not match the expected number, or type</p>
+<p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; ord('a', 'b')
+ArgError: Given extra arguments, only expected 1, but given 2
+Call Stack:
+  #0: In '&lt;expr&gt;' (line 1, col 1):
+ord('a', 'b')
+^~~~~~~~~~~~~
+  #1: In ord(chr) [cfunc]
+</code></pre></dd><dt id='SizeError'>SizeError(what='')</dt><dd><p>    Errors of this type are thrown when arguments are of invalid sizes/shapes</p>
+</dd><dt id='OSError'>OSError(what='')</dt><dd><p>Errors of this type are thrown when an error is reported by the OS, for example by setting <code>errno</code> in C</p>
+<p>This is a [templatable](/more/templates) type, which means there are subtypes based on the type of error expressed. The specific templated types are sometimes platform-specific, and we are currently working to standardize what we can. </p>
+<p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; open("NonExistantFile.txt")
+OSError[2]: Failed to open 'NonExistantFile.txt' (No such file or directory)
+Call Stack:
+  #0: In '&lt;expr&gt;' (line 1, col 1):
+open("NonExistantFile.txt")
+^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #1: In open(src, mode='r') [cfunc]
+  #2: In io.FileIO.__init(self, src, mode='r') [cfunc]
+In &lt;thread 'main'&gt;
+</code></pre><p>    </dd></dl></p>
+<h2 id='Modules'>4. Modules</h2>
+<ul><li><a href='#util'>util: Utilities</a>: Utilities Module</li><li><a href='#os'>os: Operating System</a>: Operating System Module</li><li><a href='#time'>time: Time</a>: Time Module</li><li><a href='#m'>m: Math</a>: Math Module</li></ul><p>This section documents the builtin modules in kscript, of which there are plenty! The general philosophy in kscript is to make APIs as cross-platform and backend-independent as possible. What that means is that standard types, functions, and modules put forth names and functionality that might not directly map to a particular existing library -- even if kscript uses that library internally to perform the functionality. </p>
+<p>You can count on these modules being available in any kscript distribution, and having a reliable API. Unreliable/non-standard functions, types, and variables typically begin with an underscore (<code>_</code>), so be weary if using one of those functions, it might not be available everywhere!</p>
+<p>A good example of this is the <a href='#os'>os</a> module, which uses the C standard library to perform tasks, but the functions will have different and sometimes better suited names to what they actually do.</p>
+<h3 id='util'>4.1. util: Utilities</h3>
+<ul></ul><p>This module, <code>util</code>, implements commonly used datastructures and algorithms that aren't in the <a href='#Builtins'>builtins</a>. While they are commonly used, they are not used frequently enough to use the global namespace and thus restrict developers from using those names in their own code. So, you can think of the <code>util</code> module as "builtins 2: electric boogaloo".</p>
+<dl><dt id='util.Queue'>util.Queue(objs=none)</dt><dd><p>This type represents a <a href='https://en.wikipedia.org/wiki/Queue_(abstract_data_type)'>queue</a> which can handle arbitrary objects. It can be created via the constructor, which accepts <code>objs</code> (default: none), which is expected to be an iterable containing the elements to initialize the queue from.</p>
+<p>    </p>
+<p>    The main purpose of a queue over the builtin <a href='#list'>list</a> type is that certain operations are much more efficient for a queue. For example, popping from the left and right is $O(1)$, whereas with a list they are $O(N)$ and $O(1)$ respectively (where $N$ is the length of the collection). This has large consequences if you are doing the operation over and over for example -- using a queue will reduce runtime drastically.</p>
+<p>    A queue is iterable just like a <a href='#list'>list</a>, and it iterates in the same order as a list. </p>
+<p>    <dl><dt id='util.Queue.pop'>util.Queue.pop(self)</dt><dd>Pops from the front of the queue (i.e. the <code>0</code>th element)</p>
+<p>        This can be confusing, since <a href='#list.pop'>list.pop</a> pops from the back of the list (i.e. the last element). Keep in mind the differences</p>
+<p>        </dd><dt id='util.Queue.push'>util.Queue.push(self, *args)</dt><dd>Pushes all of <code>args</code> to the back of the queue</dd><dt></dt></dl></p>
+<p>    </dd><dt id='util.BST'>util.BST(objs=none)</dt><dd>This type represents a key-value mapping following the <a href='#dict'>dict</a> <a href='#Patterns'>pattern</a>, implemented using a <a href='https://en.wikipedia.org/wiki/Binary_search_tree'>Binary Search Tree (BST)</a>. Unlike <a href='#dict'>dict</a>, however, keys must be comparable (not neccessarily hashable), and are stored in sorted order (as opposed to insertion order). This is important for algorithms which maintain a sorted list or mapping.</p>
+<p>    </p>
+<p>    You can construct a BST with the constructor, which accepts a <a href='#dict'>dict</a> -like mapping, which inserts every key/value pair into a sorted mapping.</p>
+<p>    Values for keys can be retreived via indexing: <code>x[k]</code> gets the value associated with key <code>k</code> in the BST <code>x</code>, or throws a <a href='#KeyError'>KeyError</a> if no such key exists. Likewise, <code>x[k] = v</code> adds (or replaces) the value associated with key <code>k</code> in the BST <code>x</code> with value <code>v</code>.</p>
+<p>    You can iterate over the keys in a binary search tree as well:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; x = util.BST({2: 'a', 1: 'b'})
+util.BST({1: 'b', 2: 'a'})
+&gt;&gt;&gt; for k in x, print (k, x[k])
+1 b
+2 a
+</code></pre><p>Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; x = util.BST({2: 'a', 1: 'b'})
+util.BST({1: 'b', 2: 'a'})
+&gt;&gt;&gt; 1 in x
+true
+&gt;&gt;&gt; 3 in x
+false
+&gt;&gt;&gt; x[0] = 'hey'
+&gt;&gt;&gt; x
+util.BST({0: 'hey', 1: 'b', 2: 'a'})
+</code></pre><p>    </dd><dt id='util.Bitset'>util.Bitset(objs=none)</dt><dd></p>
+<p>        This type represents a <a href='https://en.wikipedia.org/wiki/Bit_array'>bitset</a> (also called "bit map", "bit array", etc). The general idea is that it can store whether positive integers are in a set or not based on a single integer mask. This type is supposed to behave exactly like the builtin <a href='#set'>set</a> type, except it only supports positive integers, and uses $O(max(X))$ memory (where $X$ are the elements in the set). Sets use $O(N)$ memory, where $N$ is the number of elements in the set.</p>
+<p>        Bitsets can be created with an iterable <code>objs</code> (default: none), in which case all elements are converted to an integer and added to the set. Additionally, a bitset can be created with a single integer, which represents the bit mask of the entire set (see below).</p>
+<p>        If we look at a number decomposed into bits, we can say that if the <code>i</code>th bit is set to <code>1</code>, then <code>i</code> is in the set, and otherwise, <code>i</code> is not in the set. For example, the integer <code>0b11011</code> corresponds to the integers <code>0</code>, <code>1</code>, <code>3</code>, and <code>4</code>. </p>
+<p>        You can convert a bitset into the corresponding integer like so:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; util.Bitset([0, 1, 3, 4]) as int
+27
+&gt;&gt; bin(27)    # Check binary notation
+0b11011
+</code></pre><p>        The main advantage of using a bitset over a normal set with integers is speed of common operations. For example, intersection, union, difference, and so forth can be computed extremely efficiently, perhaps 10x faster. So, this type is available for those use cases.</p>
+<p>    </dd><dt id='util.Graph'>util.Graph(nodes=none, edges=none)</dt><dd></p>
+<p>        This type is currently being implemented, so this documentation is incomplete.</p>
+<p>    </dd></dl></p>
+<h3 id='os'>4.2. os: Operating System</h3>
+<ul></ul><p>This module, <code>os</code>, allows code to interact with the operating system (OS) that the program is running on. For example, creating directories, gathering information about the filesystem, launching threads, launching processes, and accessing environment variables are all covered in this module.</p>
+<p>Due to differences between operating systems that kscript can run on, some functionality may be different, or even missing on some platforms. We attempt to document known cases of functions behaving differently or when something is not supported. Typically, an error is thrown whenever something is not available on a particular platform.</p>
+<dl><dt id='os.argv'>os.argv</dt><dd><p>List of commandline arguments passed to the program. Typically, <code>os.argv[0]</code> is the file that was ran, and <code>os.argv[1:]</code> are the arguments given afterward</dd><dt id='os.stdin'>os.stdin</dt><dd>A readable <a href='#io.FileIO'>io.FileIO</a> object representing the input to the program</dd><dt id='os.stdout'>os.stdout</dt><dd>A writeable <a href='#io.FileIO'>io.FileIO</a> object representing the output from the program</dd><dt id='os.stderr'>os.stderr</dt><dd>A writeable <a href='#io.FileIO'>io.FileIO</a> object representing the error output from the program</dd><dt id='os.getenv'>os.getenv(key, defa=none)</dt><dd>Gets an <a href='https://en.wikipedia.org/wiki/Environment_variable'>environment variable</a> corresponding to <code>key</code> (which is expected to be a string)</p>
+<p>    </p>
+<p>    In the case that <code>key</code> did not exist in the environment, this function's behavior depends on whether <code>defa</code> is given. <ul><li>If <code>defa</code> is given, then it is returned</li><li>Otherwise, an <a href='#OSError'>OSError</a> is thrown</li></ul></dd><dt id='os.setenv'>os.setenv(key, val)</dt><dd>Sets an <a href='https://en.wikipedia.org/wiki/Environment_variable'>environment variable</a> corresponding to <code>key</code> (which is expected to be a string) to <code>val</code> (which is also expected to be a string)</p>
+<p>    </p>
+<p>    In the case that something went wrong (i.e. an invalid name, general OS error), an <a href='#OSError'>OSError</a> is thrown</dd><dt id='os.cwd'>os.cwd()</dt><dd>Get the current <a href='https://en.wikipedia.org/wiki/Working_directory'>working directory</a> of the process, as an <a href='#os.path'>os.path</a> object</p>
+<p>    </p>
+<p>    To retrieve it as a string, the code <code>os.getcwd() as str</code> can be used</p>
+<p>    </p>
+<p>    To change the working directory, see the <a href='#os.chdir'>os.chdir</a> function</dd><dt id='os.chdir'>os.chdir(path)</dt><dd>Set the current <a href='https://en.wikipedia.org/wiki/Working_directory'>working directory</a> of the process to <code>path</code>. <code>path</code> is expected to be either a string or an <a href='#os.path'>os.path</a> object</p>
+<p>    </p>
+<p>    If <code>path</code> did not exist, or for some other reason the operation failed (i.e. permissions), an <a href='#OSError'>OSError</a> is thrown</dd><dt id='os.mkdir'>os.mkdir(path, mode=0o777, parents=false)</dt><dd>Creates a directory on the filesystem at <code>path</code>, with mode <code>mode</code>. Mode is expected to be a <a href='https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation'>octal numerical notation</a> of the file permission bits (default: allow everything for everybody)</p>
+<p>    </p>
+<p>    If <code>parents</code> is truthy, then parents of <code>path</code> that do not exist are created recursively. If <code>parents</code> is false, then an error is raised when trying to create a directory within another directory that does not exist yet</dd><dt id='os.rm'>os.rm(path, parents=false)</dt><dd>Removes a file or directory <code>path</code> from the filesystem</p>
+<p>    </p>
+<p>    If <code>path</code> refers to a directory, then the behavior depends on <code>parents</code>: <ul><li>If <code>parents</code> is truthy, then non-empty directories have their contents recursively deleted</li><li>Otherwise, <code>path</code> will only be removed if it is empty; otherwise this function will throw an <a href='#OSError'>OSError</a></li></ul></dd><dt id='os.listdir'>os.listdir(path)</dt><dd>Returns a tuple of <code>(dirs, files)</code> representing the directories and files within the directory <code>path</code>, respectively. Note that the elements within the lists <code>dirs</code> and <code>files</code> are string objects, and not <a href='#os.path'>os.path</a> objects. The entries <code>'.'</code> and <code>'..'</code> are never included in <code>dirs</code></p>
+<p>    </p>
+<p>    If <code>path</code> is not a directory, this function throws an <a href='#OSError'>OSError</a></dd><dt id='os.stat'>os.stat(path)</dt><dd>Queries information about the file or directory <code>path</code> on the filesystem. This is a type that can be used as a function to perform such a query</p>
+<p>    </p>
+<p>    It has the following attributes: </p>
+<p>    <dl><dt id='.dev'>.dev</dt><dd>Device ID, which is typically encoded as major/minor versions. This is OS-specific typically</dd><dt id='.inode'>.inode</dt><dd>The <a href='https://en.wikipedia.org/wiki/Inode'>inode</a> of the file or directory on disk as an integer</dd><dt id='.gid'>.gid</dt><dd>The group ID of the owner</dd><dt id='.uid'>.uid</dt><dd>The user ID of the owner</dd><dt id='.size'>.size</dt><dd>The size, in bytes, of the file</dd><dt id='.mode'>.mode</dt><dd>The mode of the file, represented as a bitmask integer</dd><dt id='.mtime'>.mtime</dt><dd>The time of last modification, in seconds-since-epoch, as a floating point number (see the <a href='#time'>time</a> module)</dd><dt id='.atime'>.atime</dt><dd>The time of last access, in seconds-since-epoch, as a floating point number (see the <a href='#time'>time</a> module)</dd><dt id='.ctime'>.ctime</dt><dd>The time of last status change, in seconds-since-epoch, as a floating point number (see the <a href='#time'>time</a> module)</dd></dl></p>
+<p>    </dd><dt id='os.lstat'>os.lstat(path)</dt><dd>Queries information about the file or link or directory <code>path</code> on the filesystem. Equivalent to <a href='#os.stat'>os.stat</a>, except for the fact that this function does not follow symbolic links (and thus, if called with a symbolic link, queries information about the link itself, rather than the path that it points to). Returns an <a href='#os.stat'>os.stat</a> object</p>
+<p>    </dd><dt id='os.fstat'>os.fstat(fd)</dt><dd>Queries information about an open file descriptor <code>fd</code> (which is expected to be an integer, or convertible to one). Returns an <a href='#os.stat'>os.stat</a> object</p>
+<p>    </p>
+<p>    Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; os.fstat(os.stdin)
+&lt;os.stat ...&gt;
+&gt;&gt;&gt; os.fstat(os.stdin.fileno) # os.stdin.fileno == os.stdin as int
+&lt;os.stat ...&gt;
+</code></pre><p>    </dd><dt id='os.pipe'>os.pipe()</dt><dd>Creates a new pipe, and returns a tuple of <code>(readio, writeio)</code>, which are the readable and writeable ends of the pipe, respectively. Both objects are of type <a href='#io.RawIO'>io.RawIO</a></dd><dt id='os.dup'>os.dup(fd, to=-1)</dt><dd>Duplicates an open file descriptor <code>fd</code> (which should be an integer, or convertible to one)</p>
+<p>    </p>
+<p>    If <code>to &lt; 0</code>, then this function creates a new file descriptor and returns the corresponding <a href='#io.RawIO'>io.RawIO</a> object. Otherwise, it replaces <code>to</code> with a copy of the source of <code>fd</code></dd><dt id='os.exec'>os.exec(cmd)</dt><dd>Executes <code>cmd</code> (which should either be a string, or a list of strings) as if it was typed into the system shell, and return the exit code as an integer</p>
+<p>    </p>
+<p>    See <a href='#os.proc'>os.proc</a> type for more fine grain control of process spawning</dd><dt id='os.fork'>os.fork()</dt><dd>Forks the current process, resulting in two processes running the code afterwards. This function returns <code>0</code> in the child process, and the PID (process ID) in the parent process (which should be an integer greater than 0)</p>
+<p>    </p>
+<p>    This function is available on the following platforms: <ul><li>linux</li><li>macos</li><li>unix</li></ul></dd><dt id='os.mutex'>os.mutex()</dt><dd>This function creates a <a href='https://en.wikipedia.org/wiki/Lock_(computer_science)'>lock</a> which can be used to restrict access to certain data or code. This is a type which can be used as a function to create an instance</p>
+<p>    </p>
+<p>    Each mutex starts out unlocked, and then can be locked (or attempted to lock via various functions)</p>
+<p>    <dl><dt id='os.mutex.lock'>os.mutex.lock(self)</dt><dd>Locks the mutex, waiting until any other threads which hold the lock to unlock it before it is acquired</p>
+<p>        </p>
+<p>        If the same thread which is attempting to lock the mutex has already locked it, a "deadlock" may occur and your program may halt</dd><dt id='os.mutex.trylock'>os.mutex.trylock(self)</dt><dd>Locks the mutex, if it can be locked instantly, otherwise do nothing. Returns whether it succesfully locked. The mutex should only be unlocked if this function returned true</p>
+<p>Example:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; mut = os.mutex()
+&gt;&gt;&gt; if mut.trylock() {
+...     # Acquired lock, do stuff...
+...     mut.unlock() # Must unlock!
+... } else {
+...     # Failed to acquire lock, do other stuff...
+...     # Do not unlock!
+... }
+</code></pre><p>  </p>
+<p>        </dd><dt id='os.mutex.unlock'>os.mutex.unlock(self)</dt><dd>Unlocks the mutex, waiting until any other threads which hold the lock to unlock it before it is acquired</dd></dl></p>
+<p>    </dd><dt id='os.thread'>os.thread(of, args=(), name=none)</dt><dd>Creates a new <a href='https://en.wikipedia.org/wiki/Thread_(computing)'>thread</a> which runs the the function <code>of</code> with arguments <code>args</code> (default: no arguments), with the name <code>name</code> (default: auto-generate a name). This is a type which can be called like a function to create an instance</p>
+<p>    </p>
+<p>    The thread starts out inactive, you must call <code>.start()</code> to actually begin executing</p>
+<p>    </p>
+<p>    <dl><dt id='os.thread.start'>os.thread.start(self)</dt><dd>Starts executing the thread</dd><dt id='os.thread.join'>os.thread.join(self)</dt><dd>Waits for a thread to finish executing, blocking until it does</dd><dt id='os.thread.isalive'>os.thread.isalive(self)</dt><dd>Polls the thread, and returns a boolean indicating whether the thread is currently alive and executing</dd></dl></p>
+<p>    </dd><dt id='os.proc'>os.proc(argv)</dt><dd>Creates a new <a href='https://en.wikipedia.org/wiki/Process_(computing)'>process</a> with the given arguments <code>argv</code>, which can be either a string, or a list of strings representing the arguments. This is a type which can be called to create an instance.</p>
+<p>    <dl><dt id='.pid'>.pid</dt><dd>The <a href='https://en.wikipedia.org/wiki/Process_identifier'>process ID</a>, as an integer</dd><dt id='.stdin'>.stdin</dt><dd>The standard input of the process, as either an <a href='#io.RawIO'>io.RawIO</a> or <a href='#io.FileIO'>io.FileIO</a> (depending on launch configuration). This is writeable, and can be used to send input to the process</dd><dt id='.stdout'>.stdout</dt><dd>The standard output of the process, as either an <a href='#io.RawIO'>io.RawIO</a> or <a href='#io.FileIO'>io.FileIO</a> (depending on launch configuration). This is readable, and can be used to read output from the process</dd><dt id='.stderr'>.stderr</dt><dd>The standard error output of the process, as either an <a href='#io.RawIO'>io.RawIO</a> or <a href='#io.FileIO'>io.FileIO</a> (depending on launch configuration). This is readable, and can be used to read error output from the process</dd><dt id='os.proc.join'>os.proc.join(self)</dt><dd>Waits for the process to finish executing, and returns the exit code of the process as an integer</dd><dt id='os.proc.isalive'>os.proc.isalive(self)</dt><dd>Polls the process and returns a boolean describing whether the process is still alive and running</dd><dt id='os.proc.signal'>os.proc.signal(self, code)</dt><dd>Sends an integer signal to the process</dd><dt id='os.proc.kill'>os.proc.kill(self)</dt><dd>Attempts to kill the process by sending the 'KILL' signal (typically <code>9</code>) to the process</dd></dl></p>
+<p>        </p>
+<p>    </dd><dt id='os.path'>os.path(path='.', root=none)</dt><dd>Creates a path object, which acts similarly to a string (i.e. can be passed to functions such as <a href='#os.chdir'>os.chdir</a>, <a href='#os.stat'>os.stat</a>, and so on) but also can be manipulated at higher levels than a string, which makes it easier to traverse the filesystem, and makes for more readable code than interpreting <a href='#os.stat'>os.stat</a> results</p>
+<p>    </p>
+<p>    A distinction should be made between absolute paths (i.e. those which unambiguously refer to a single file on disk) and relative paths (i.e. those which require a working directory to resolve completely). To convert a string or <a href='#os.path'>os.path</a> object to its absolute path, you can use the <a href='#os.real'>os.real</a> function. Or, the builtin <a href='#abs'>abs</a> function works on <a href='#os.path'>os.path</a> objects.</p>
+<p>    <dl><dt id='.root'>.root</dt><dd>Either <code>none</code> (for relative paths), or a string representing the start of an absolute path</p>
+<p>        </p>
+<p>        Since some platforms (most Unix-like ones) use <code>/</code> as the root for the filesystem, and other platforms (such as Windows) use drive letters to denote absolute paths (<code>C:\</code>, <code>D:\</code>, etc), the <code>.root</code> may be any of those valid roots, depending on which platform you are on. On all platforms, relative paths have <code>root==none</code></p>
+<p>                Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; os.path('/path/to/file.txt').root
+'/'
+&gt;&gt;&gt; os.path('relative/path/to/file.txt').root
+none
+</code></pre><p>        </dd><dt id='.parts'>.parts</dt><dd>A tuple containing string parts of the path, which is implicitly seperated by directory seperators.</p>
+<p>        </p>
+<p>        Examples:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; os.path('/path/to/file.txt').parts
+('path', 'to', 'file.txt')
+&gt;&gt;&gt; os.path('relative/path/to/file.txt').parts
+('relative', 'path', 'to', 'file.txt')
+</code></pre><p>        </dd><dt></dt><dd></dd><dt></dt></dl></dd><dt></dt></dl><h3 id='time'>4.3. time: Time</h3>
+<ul></ul></p>
+<p>This module, <code>time</code>, allows code to programmatically determine the current time, convert date-times to human readable formats, create timestamps, and reason about multiple times. </p>
+<dl><dt id='time.ISO8601'>time.ISO8601</dt><dd><p>This is a string which is the format that can be passed to <a href='#time.format'>time.format</a> and <a href='#time.parse'>time.parse</a> to format and parse <a href='https://en.wikipedia.org/wiki/ISO_8601'>ISO8601</a> format. This format is the preferred format for exchanges of dates and times.</dd><dt id='time.time'>time.time()</dt><dd>Returns the number of seconds since the Epoch as a floating point number.</p>
+<p>    </p>
+<p>    The Epoch may depend on your platform, but is most commonly 1970-01-01. You can check when the epoch is by passing <code>0</code> to <a href='#time.format'>time.format</a>:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; time.format(0.0)
+'1970-01-01T00:00:00+0000'
+</code></pre></dd><dt id='time.clock'>time.clock()</dt><dd><p>Returns the number of seconds since the process started as a floating point number.</dd><dt id='time.sleep'>time.sleep(dur)</dt><dd>Causes the current thread to sleep for <code>dur</code> seconds, which should be a floating point number</p>
+<p>    </p>
+<p>    The exact accuracy of this function cannot be guaranteed, it depends on the platform function. For example, if <code>nanosleep()</code> or <code>usleep()</code> are available in the C library, this function will be accurate. At worst, this function will only sleep to the nearest second</dd><dt id='time.now'>time.now()</dt><dd>Returns a <a href='#time.DateTime'>time.DateTime</a> referring to the current time, in UTC</p>
+<p>    </p>
+<p>    See <a href='#time.localnow'>time.localnow</a> for local-equivalent function</dd><dt id='time.localnow'>time.localnow()</dt><dd>Returns a <a href='#time.DateTime'>time.DateTime</a> referring to the current time, in the local timezone</p>
+<p>    </p>
+<p>    See <a href='#time.now'>time.now</a> for UTC-equivalent function</dd><dt id='time.format'>time.format(val=none, fmt=time.ISO8601)</dt><dd>Returns a string which is the time value <code>val</code> (default: <a href='#time.now'>time.now</a>(), which may be a floating point number, or a <a href='#time.DateTime'>time.DateTime</a> object) formatted according to <code>fmt</code>. </p>
+<p>    </p>
+<p>    The format string is similar to <a href='#printf'>printf</a> syntax, but with different seperators:</p>
+<p>    <dl><dt id='%%'>%%</dt><dd>Literal <code>%</code></dd><dt id='%Y'>%Y</dt><dd>The year, in full</dd><dt id='%y'>%y</dt><dd>The year, modulo 100 (i.e. <code>1970</code> would result in <code>70</code>)</dd><dt id='%m'>%m</dt><dd>The month of the year (starting at 1), zero-padded to 2 digits (i.e. February would be <code>02</code>)</dd><dt id='%B'>%B</dt><dd>The month of the year, in the current locale, full</dd><dt id='%b'>%b</dt><dd>The month of the year, in the current locale, abbreviated</dd><dt id='%U'>%U</dt><dd>The week of the year as a decimal number (Sunday is <code>0</code>). Days before the first Sunday are week 0</dd><dt id='%W'>%W</dt><dd>The week of the year as a decimal number (Monday is <code>0</code>). Days before the first Monday are week 0</dd><dt id='%j'>%j</dt><dd>The day of the year as a decimal number (starting with <code>001</code>), zero-padded to 3 digits</dd><dt id='%d'>%d</dt><dd>The day of the month as a decimal number (starting with <code>01</code>), zero-padded to 2 digits</dd><dt id='%A'>%A</dt><dd>The day of the week, in the current locale, full</dd><dt id='%a'>%a</dt><dd>The day of the week, in the current locale, abbreviated</dd><dt id='%w'>%w</dt><dd>The day of the week as an integer (Monday is <code>0</code>)</dd><dt id='%H'>%H</dt><dd>Hour (in 24-hour clock), zero-padded to 2 digits (<code>00</code>, ..., <code>23</code>)</dd><dt id='%I'>%I</dt><dd>Hour (in 12-hour clock), zero-padded to 2 digits (<code>00</code>, ..., <code>12</code>)</dd><dt id='%M'>%M</dt><dd>Minute, zero-padded to 2 digits (<code>00</code>, ..., <code>59</code>)</dd><dt id='%S'>%S</dt><dd>Second, zero-padded to 2 digits (<code>00</code>, ..., <code>59</code>)</dd><dt id='%f'>%f</dt><dd>Microsecond, zero-padded to 6 digits (<code>000000</code>, ..., <code>999999</code>)</dd><dt id='%z'>%z</dt><dd>Timezone UTC offset in <code>(+|-)HHMM[SS.[ffffff]]</code></dd><dt id='%Z'>%Z</dt><dd>Timezone name (or empty if there was none)</dd><dt id='%p'>%p</dt><dd>Current locale's equivalent of <code>AM</code> and <code>PM</code></dd><dt id='%c'>%c</dt><dd>Current locale's default date/time representation</dd><dt id='%x'>%x</dt><dd>Current locale's default date representation</dd><dt id='%X'>%X</dt><dd>Current locale's default time representation</dd><dt></dt></dl></p>
+<p>    </dd><dt id='time.DateTime'>time.DateTime(obj=none, tz=none)</dt><dd></p>
+<p>        This type represents a broken-down time structure comprised of the attributes humans commonly associate with a time. For example, the year, month, day, and so forth.</p>
+<p>        DateTimes can be created with the empty constructor, <code>time.DateTime()</code>, which is equivalent to the <a href='#time.now'>time.now</a> function. Or, you can pass the first argument as a number of seconds since the Epoch (i.e. what is returned by <a href='#time.time'>time.time</a>). For example, <code>time.DateTime(0.0)</code> will give you a DateTime representing the system Epoch.</p>
+<p>        The constructor also accepts another argument, <code>tz</code>, which is the timezone. If not given, or none, the resulting datetime is in UTC (which is to say, a reasonable default). To get a datetime in local time, you can pass <code>'local'</code> as the second argument. You can also give it a specific name of a timezone, and it will attempt to use that timezone.</p>
+<p>        This type is not a completely consistent datatype (as it must deal with things like daylight savings, leap seconds, leap year, and so forth), so it is recommended to use a float to capture absolute times, and deal with timestamps.</p>
+<p>        Here are some examples of creating datetimes in various ways (the output may differ based on your location, obviously!):</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; time.DateTime()      # Current datetime, in UTC
+&lt;time.DateTime '2021-01-13T01:10:26+0000'&gt;
+&gt;&gt;&gt; time.DateTime(0)     # Epoch, in UTC
+&lt;time.DateTime '1970-01-01T00:00:00+0000'&gt;
+&gt;&gt;&gt; time.DateTime(0, "local") # Epoch, in current timezone
+&lt;time.DateTime '1969-12-31T19:00:00-0500'&gt;
+</code></pre><p>        <dl><dt id='.tse'>.tse</dt><dd>The time since Epoch, in number of seconds as a floating point number</dd><dt id='.tz'>.tz</dt><dd>The timezone, which may be a string (the name), or <code>none</code> if there was no timezone</dd><dt id='.year'>.year</dt><dd>The year as an integer</dd><dt id='.month'>.month</dt><dd>The month as an integer</dd><dt id='.day'>.day</dt><dd>The day as an integer</dd><dt id='.hour'>.hour</dt><dd>The hour as an integer</dd><dt id='.min'>.min</dt><dd>The minute as an integer</dd><dt id='.sec'>.sec</dt><dd>The second as an integer</dd><dt id='.nano'>.nano</dt><dd>The nanosecond as an integer</dd><dt></dt></dl></p>
+<p>    </dd><dt></dt></dl><h3 id='m'>4.4. m: Math</h3>
+<ul></ul></p>
+<p>This module, <code>m</code>, provides functionality to aid in mathematical problems/needs .This module contains common mathematical constants (such as $\pi$, $\tau$, $e$, and so forth), as well as functions that efficiently and accurately compute commonly used functions (such as $\sin$, $\cos$, $\Gamma$, and so forth). This module also includes some integer and number-theoretic functions, such as computing the greatest common denominator (GCD), binomial coefficients, and primality testing.</p>
+<p>This module is meant to work with the types that follow the <a href='#number'>number</a> <a href='#Patterns'>pattern</a>, such as <a href='#int'>int</a>, <a href='#float'>float</a>, and <a href='#complex'>complex</a>. Most functions are defined for real and complex evaluation. If a real number is given, then (generally) a real number is returned. If a complex number is given, then (generally) a complex number is returned. If a real number is given (for example, to <a href='#m.sqrt'>m.sqrt</a>) and the result would be a complex number (i.e. <code>m.sqrt(-1)</code>), then an error is thrown (this makes it easy to find bugs, and in general real numbers are what most people care about – and they would like an error on code such as <code>m.sqrt(-1)</code>). To get around this, you can write: <code>m.sqrt(complex(-1))</code>, and the result will always be a complex, and an error won’t be thrown for negative numbers.</p>
+<p>Constants are given in maximum precision possible within a float, but for all of these constants, their value is not exact. This causes some issues or unexpected results. For example, mathematically, $\sin(\pi) = 0$, but <code>m.sin(m.pi) == 1.22464679914735e-16</code>. This is expected when using finite precision. Just make sure to keep this in mind.</p>
+<p>Here are some recommended ways to handle it:</p>
+<pre class='language-ks'><code>&gt;&gt;&gt; if m.sin(m.pi) == 0 {}               # Bad, may cause unexpected results
+&gt;&gt;&gt; if abs(m.sin(m.pi) - 0) &lt; 1e-6 {}    # Better, uses a decent tolerance (1e-6 is pretty good)
+&gt;&gt;&gt; if m.isclose(m.sin(m.pi), 0) {}      # Best, use the m.isclose() function
+</code></pre></div></div>
+<svg class='sidenav-button' onclick='doq_togglesidenav()' viewBox='0 0 100 80' width='40' height='40'><rect width='100' height='20'></rect><rect y='30' width='100' height='20'></rect><rect y='60' width='100' height='20'></rect></svg>
+</body>
+</html>
