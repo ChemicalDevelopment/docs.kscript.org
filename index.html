@@ -1545,7 +1545,7 @@ foo(); bar()
 </code></pre><p>However, if there is some circumstance that makes it better to have multiple on the same line, you may have expression statements ended with <code>;</code>. This is sometimes useful when creating one liners running with the interpreter, but in production code or code you are sharing with anyone else, you should just put them on seperate lines.</p>
 <h4 id='Assert_Statement'>4.3.2. Assert Statement<a href='#Assert_Statement' class='link-div'><svg viewBox='0 0 16 16' aria-hidden='true'><use xlink:href='#svg-link'></use></svg></a></h4>
 <ul></ul><p></p>
-<p>The <code>assert</code> statement is an example of <a href='#https'>assertion syntax</a> for the kscrip language. It instructs the program to evaluate a conditional expression, check whether it is truthy (see <a href='#bool'>bool</a>), and if it is not truthy, throws an <a href='#AssertError'>AssertError</a> up the call stack.</p>
+<p>The <code>assert</code> statement is an example of <a href='https://en.wikipedia.org/wiki/Assertion_(software_development)'>assertion syntax</a> for the kscrip language. It instructs the program to evaluate a conditional expression, check whether it is truthy (see <a href='#bool'>bool</a>), and if it is not truthy, throws an <a href='#AssertError'>AssertError</a> up the call stack.</p>
 <p>This is done to do "sanity checks" on things which should be a given value, and is encouraged for only internal code checking (i.e. don't check user input with <code>assert</code>, use <code>if</code> and then <a href='#Throw_Statements'><code>throw</code></a> an <a href='#Exception'>Exception</a> yourself). Here is the syntax:</p>
 <pre class='language-ks'><code># Evaluates `x` and asserts that it is true
 assert x
